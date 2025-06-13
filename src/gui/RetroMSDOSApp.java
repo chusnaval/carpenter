@@ -22,9 +22,9 @@ public class RetroMSDOSApp {
 	
 	static {
 		// register commands
-		commandMap.put("hola", new GreetCommand());
-		commandMap.put("hora", new CurrentTimeCommand());
-		commandMap.put("fecha", new CurrentDateCommand());
+		// TODO add, register, find
+		commandMap.put("time", new CurrentTimeCommand());
+		commandMap.put("date", new CurrentDateCommand());
 		commandMap.put("exit", new ExitCommand());
 	}
 	

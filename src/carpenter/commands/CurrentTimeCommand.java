@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 public class CurrentTimeCommand implements Command {
 
 	@Override
-	public String execute(){
+	public String execute(String... parts){
 		
 		// get the current time
 		LocalTime currentTime = LocalTime.now();

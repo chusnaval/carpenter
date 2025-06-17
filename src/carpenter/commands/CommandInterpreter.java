@@ -28,7 +28,7 @@ public class CommandInterpreter {
 				Command command = commandMap.get(commandName.toLowerCase());
 				
 				if(command != null) {
-					command.execute();
+					command.execute(parts);
 				} else {
 					System.out.println("Comando desconocido: " + input);
 				}

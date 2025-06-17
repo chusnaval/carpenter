@@ -1,7 +1,5 @@
-package gui;
+package carpenter.gui;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -18,32 +16,34 @@ import carpenter.commands.Command;
 import carpenter.commands.CurrentDateCommand;
 import carpenter.commands.CurrentTimeCommand;
 import carpenter.commands.ExitCommand;
-import carpenter.commands.GreetCommand;
+import carpenter.commands.FindItemCommand;
+import carpenter.commands.NewPurchaseCommand;
+import carpenter.commands.RequestNewPurchaseCommand;
 
 public class RetroMSDOSApp {
 	
 	private static Map<String, Command> commandMap = new HashMap<>();
-	private static Font retroFont = new Font("Monospaced", Font.BOLD, 14);
+
 	private static int historyIndex = -1;
 	static {
 		// register commands
-		// TODO add, register, find
 		commandMap.put("time", new CurrentTimeCommand());
+		commandMap.put("req", new RequestNewPurchaseCommand());
+		commandMap.put("add", new NewPurchaseCommand());
+		commandMap.put("find", new FindItemCommand());
 		commandMap.put("date", new CurrentDateCommand());
 		commandMap.put("exit", new ExitCommand());
 	}
 	
     public static void main(String[] args) {
         // Create the main frame
-        JFrame frame = createMainFrame();
-
-        // Use a monospaced font for a retro look
+        JFrame frame = GuiUtils.createMainFrame();
 
         // Create a text area with a retro color scheme
-        JTextArea textArea = createTextArea();
+        JTextArea textArea =  GuiUtils.createTextArea();
 
         // Create an input field for commands
-        JTextField inputField = createInputField();
+        JTextField inputField = GuiUtils. createInputField();
 
         List<String> commandHistory = new ArrayList<>();
   
@@ -91,7 +91,7 @@ public class RetroMSDOSApp {
             	
             	if (command!=null) {
             		
-            		textArea.append(command.execute() + "\n");
+            		textArea.append(command.execute(parts) + "\n");
             		
             	}else {
             		textArea.append("Comando desconocido: " + command + "\n");
@@ -112,30 +112,4 @@ public class RetroMSDOSApp {
         frame.setVisible(true);
     }
 
-	private static JTextField createInputField() {
-		JTextField inputField = new JTextField();
-        inputField.setFont(retroFont);
-        inputField.setBackground(Color.BLUE);
-        inputField.setForeground(Color.YELLOW);
-		return inputField;
-	}
-
-	private static JTextArea createTextArea() {
-
-		JTextArea textArea = new JTextArea();
-        textArea.setFont(retroFont);
-        textArea.setBackground(Color.BLUE);
-        textArea.setForeground(Color.YELLOW); 
-        textArea.setText(new GreetCommand().execute() + "\n");
-        textArea.setEditable(false);
-		return textArea;
-	}
-
-	private static JFrame createMainFrame() {
-		JFrame frame = new JFrame("Carpenter 0.1");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLayout(new BorderLayout());
-		return frame;
-	}
 }

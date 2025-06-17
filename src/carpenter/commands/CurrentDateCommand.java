@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 
 public class CurrentDateCommand implements Command {
     @Override
-    public String execute() {
+    public String execute(String... parts) {
         // Get the current date
         LocalDate currentDate = LocalDate.now();
 

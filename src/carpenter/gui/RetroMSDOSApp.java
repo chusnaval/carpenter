@@ -78,20 +78,40 @@ public class RetroMSDOSApp {
             String input = inputField.getText().trim();
             commandHistory.add(input);
             historyIndex = -1; // Reset history index
+            boolean inQuotes = false;
+            List<String> parts = new ArrayList<>();
+            StringBuilder currentPart = new StringBuilder();
+            
             if(input.startsWith("exit")) {
             	frame.dispose();
             }else {
-            	String[] parts = input.split("\\s+");
+            	for (int i = 0; i < input.length(); i++) {
+                    char c = input.charAt(i);
+
+                    if (c == '"') {
+                        inQuotes = !inQuotes; // Toggle the inQuotes flag
+                    } else if (Character.isWhitespace(c) && !inQuotes) {
+                        if (currentPart.length() > 0) {
+                            parts.add(currentPart.toString());
+                            currentPart.setLength(0); // Reset the current part
+                        }
+                    } else {
+                        currentPart.append(c);
+                    }
+                }
+            	 if (currentPart.length() > 0) {
+                     parts.add(currentPart.toString());
+                 }
+            	String[] arrParts = parts.toArray(new String[0]);
             	
-            	
-            	String commandName = parts[0];
-            	String[] arguments = new String[parts.length - 1];
-            	System.arraycopy(parts, 1, arguments, 0, parts.length - 1);
+            	String commandName = arrParts[0];
+            	String[] arguments = new String[arrParts.length - 1];
+            	System.arraycopy(arrParts, 1, arguments, 0, arrParts.length - 1);
             	Command command = commandMap.get(commandName.toLowerCase());
             	
             	if (command!=null) {
             		
-            		textArea.append(command.execute(parts) + "\n");
+            		textArea.append(command.execute(arrParts) + "\n");
             		
             	}else {
             		textArea.append("Comando desconocido: " + command + "\n");

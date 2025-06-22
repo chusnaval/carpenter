@@ -1,25 +1,16 @@
 package carpenter.commands;
 
-import java.util.List;
-
-import carpenter.database.ItemVault;
 import carpenter.model.Item;
+import carpenter.model.ItemResponse;
 import carpenter.model.MovieGenre;
 
-public class FindItemCommand implements Command {
+public class CommandParser {
 
-	private static final String NONE = "None";
-	private final static String ERROR_UNKNOWN_TYPE = "Usage: find [-t <type>] [-i <title>] [-g <genre>] [-y <year>] [-o <owned>]\n";
+	public static final String ERROR_UNKNOWN_TYPE = "Unknown command type";
 
-	@Override
-	public String execute(String... parts) {
-		String result = null;
-		String tmpResponse = NONE;
-		if (parts.length < 2) {
-			return ERROR_UNKNOWN_TYPE;
-		}
-
+	public static ItemResponse parseCommand(String... parts) {
 		String id = null;
+		String response = "NONE";
 		String type = null;
 		String title = null;
 		MovieGenre genre = null;
@@ -61,7 +52,7 @@ public class FindItemCommand implements Command {
 						try {
 							genre = MovieGenre.fromText(parts[++i]);
 						} catch (Exception e) {
-							tmpResponse = "Invalid option for genre";
+							response = "Invalid option for genre";
 						}
 					}
 					break;
@@ -79,7 +70,7 @@ public class FindItemCommand implements Command {
 						try {
 							owned = Boolean.parseBoolean(parts[++i]);
 						} catch (Exception e) {
-							tmpResponse = "Invalid option for owned";
+							response = "Invalid option for owned";
 						}
 					}
 					break;
@@ -89,7 +80,7 @@ public class FindItemCommand implements Command {
 				}
 
 				if (unknown != null) {
-					return "Unknown parameters";
+					return new ItemResponse(null, "Unknown parameters");
 				}
 			}
 
@@ -97,19 +88,16 @@ public class FindItemCommand implements Command {
 				id = Item.generateId(title, genre, year);
 			}
 
+			if (type != null && title != null && genre != null && year != null) {
+
+				Item item = new Item(id, type, title, genre, year, owned != null ? owned : false);
+				return new ItemResponse(item, response);
+			} else {
+				return new ItemResponse(null, "Missing required parameters");
+			}
 		} catch (Exception e) {
-			return "Error parsing command: " + e.getMessage();
+			return new ItemResponse(null, "Error parsing command: " + e.getMessage());
 		}
-
-		if (NONE.equals(tmpResponse)) {
-			Item item = new Item(null, type, title, genre, year, false);
-			List<Item> items = ItemVault.findItems(item, owned);
-			result = Item.listToFormattedColumns(items);
-		} else {
-			result = tmpResponse;
-		}
-
-		return result;
 	}
 
 }
